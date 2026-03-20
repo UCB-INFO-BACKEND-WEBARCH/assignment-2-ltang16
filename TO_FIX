@@ -1,0 +1,3 @@
+- in models.py, do I need to import app?
+    - do I also need to include "db.init_app(app)"?
+    - or does the above line need to be "db = SQLAlchemy(app)"?
