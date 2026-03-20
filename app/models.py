@@ -1,10 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
-from app import app #DO I NEED TO IMPORT THIS SINCE THE FILES ARE SPLIT OUT?
+from app import app #TODO: DO I NEED TO IMPORT THIS SINCE THE FILES ARE SPLIT OUT?
 
 
 
 db = SQLAlchemy()
-db.init_app(app) #IS THIS CORRECT? DO I NEED THIS LINE? or should it be "db=SQLAlchemy(app)"?
+db.init_app(app) #TODO: IS THIS CORRECT? DO I NEED THIS LINE? or should it be "db=SQLAlchemy(app)"?
 
 
 
@@ -30,7 +30,7 @@ class TaskModel(db.Model):
             "completed": self.completed,
             "due_date": self.due_date,
             "category_id": self.category_id,
-            "category": self.category.to_dict(), #IS THIS THE CORRECT WAY TO INCLUDE CATEGORY? 
+            "category": self.category.to_dict(), #TODO: IS THIS THE CORRECT WAY TO INCLUDE CATEGORY? 
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
@@ -44,7 +44,7 @@ class CategoryModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
     color = db.Column(db.String(7), nullable=True)
-    tasks = db.relationship("TaskModel", back_populates="category", lazy="dynamic") #IS THIS NECESSARY IF I DON'T NEED TO INCLUDE ALL RELATED TASKS?
+    tasks = db.relationship("TaskModel", back_populates="category", lazy="dynamic") #TODO: IS THIS NECESSARY IF I DON'T NEED TO INCLUDE ALL RELATED TASKS?
 
     def to_dict(self):
         return {
