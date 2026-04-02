@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 from app import app #TODO: DO I NEED TO IMPORT THIS SINCE THE FILES ARE SPLIT OUT?
 
 
@@ -19,7 +20,7 @@ class TaskModel(db.Model):
     due_date = db.Column(db.DateTime, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=True)
     category = db.relationship("CategoryModel", back_populates="tasks")
-    created_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.timezone.utc)
     updated_at = db.Column(db.DateTime)
 
     def to_dict(self):
@@ -28,11 +29,11 @@ class TaskModel(db.Model):
             "title": self.title,
             "description": self.description,
             "completed": self.completed,
-            "due_date": self.due_date,
+            "due_date": self.due_date.isoformat() if self.due_date else None,
             "category_id": self.category_id,
             "category": self.category.to_dict(), #TODO: IS THIS THE CORRECT WAY TO INCLUDE CATEGORY? 
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
     
 
