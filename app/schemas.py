@@ -21,20 +21,20 @@ class PlainCategorySchema(Schema):
 # Schema for task response output (builds on plain task schema)
 class TaskSchema(PlainTaskSchema):
     description = fields.Str(validate=validate.Length(max=500))
-    due_date = fields.DateTime(format="iso")
+    due_date = fields.DateTime(format="iso", allow_none=True)
     category_id = fields.Int()
     category = fields.Nested(PlainCategorySchema)
     created_at = fields.DateTime(format="iso")
-    updated_at = fields.DateTime(format="iso")
+    updated_at = fields.DateTime(format="iso", allow_none=True)
 
 
 
 # Schema for task creation input
 class TaskCreateSchema(Schema):
     title = fields.Str(required=True, validate=validate.Length(max=100))
-    description = fields.Str(validate=validate.Length(max=500))
-    due_date = fields.DateTime(format="iso")
-    category_id = fields.Int()
+    description = fields.Str(validate=validate.Length(max=500), allow_none=True)
+    due_date = fields.DateTime(format="iso", allow_none=True)
+    category_id = fields.Int(allow_none=True)
 
 
 
@@ -43,10 +43,9 @@ class TaskUpdateSchema(Schema):
     title = fields.Str(validate=validate.Length(max=100))
     description = fields.Str(validate=validate.Length(max=500))
     completed = fields.Bool()
-    due_date = fields.DateTime(format="iso")
+    due_date = fields.DateTime(format="iso", allow_none=True)
     category_id = fields.Int()
-    created_at = fields.DateTime(format="iso")
-    updated_at = fields.DateTime(format="iso")
+    updated_at = fields.DateTime(format="iso", allow_none=True)
 
 
 

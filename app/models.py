@@ -18,8 +18,8 @@ class TaskModel(db.Model):
     due_date = db.Column(db.DateTime, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=True)
     category = db.relationship("CategoryModel", back_populates="tasks")
-    created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC).isoformat())
-    updated_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime, nullable=True)
 
     def to_dict(self):
         return {
@@ -29,7 +29,7 @@ class TaskModel(db.Model):
             "completed": self.completed,
             "due_date": self.due_date.isoformat() if self.due_date else None,
             "category_id": self.category_id,
-            "category": self.category.to_dict(), #TODO: IS THIS THE CORRECT WAY TO INCLUDE CATEGORY? 
+            "category": self.category.to_dict() if self.category else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
