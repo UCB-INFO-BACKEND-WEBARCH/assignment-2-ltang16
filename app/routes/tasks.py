@@ -1,9 +1,9 @@
 from flask import request, jsonify
-from flask_smorest import Blueprint, abort
+from flask_smorest import Blueprint
 from flask.views import MethodView
 from models import db, TaskModel, CategoryModel
 from schemas import TaskSchema, TaskCreateSchema, TaskUpdateSchema
-from datetime import datetime
+import datetime
 
 
 
@@ -23,7 +23,7 @@ class TaskList(MethodView):
         tasks = TaskModel.query
         if completed and (completed == "true"):
             tasks = tasks.filter_by(completed=True)
-        return jsonify([t.to_dict() for t in tasks])
+        return jsonify({"tasks": [t.to_dict() for t in tasks]})
     
     # Route to POST (create) a new task
     @tasks_blp.arguments(TaskCreateSchema)
@@ -61,7 +61,7 @@ class Task(MethodView):
             if task_data.get("category_id") not in ids:
                 return jsonify({"error": "The category ID must already exist."}), 400
         task |= task_data
-        task.updated_at = datetime.now(datetime.UTC).isoformat()
+        task.updated_at = datetime.datetime.now(datetime.UTC).isoformat()
         db.session.commit()
         return task
     

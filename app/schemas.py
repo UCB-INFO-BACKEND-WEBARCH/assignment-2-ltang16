@@ -6,14 +6,14 @@ from marshmallow import Schema, fields, validate, validates, ValidationError
 class PlainTaskSchema(Schema):
     id = fields.Int(dump_only=True)
     title = fields.Str(required=True, validate=validate.Length(max=100))
-    completed = fields.Bool(dump_default=False)
+    completed = fields.Bool(load_default=False)
 
 
 
 # Plain category schema (used in category section of individual task)
 class PlainCategorySchema(Schema):
     id = fields.Int(dump_only=True)
-    name = fields.Str(required=True, unique=True, validate=validate.Length(max=50))
+    name = fields.Str(required=True, validate=validate.Length(max=50))
     color = fields.Str(validate=validate.Length(max=7))
 
 
@@ -58,7 +58,7 @@ class CategorySchema(PlainCategorySchema):
 
 # Schema for category creation input
 class CategoryCreateSchema(Schema):
-    name = fields.Str(required=True, unique=True, validate=validate.Length(min=1, max=50))
+    name = fields.Str(required=True, validate=validate.Length(min=1, max=50))
     color = fields.Str(validate=validate.Length(max=7))
 
     # Unique validator for color hexcode -- must be 7 characters (including #) with values between 0-F (uppercase only)

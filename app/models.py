@@ -1,17 +1,15 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from app import app #TODO: DO I NEED TO IMPORT THIS SINCE THE FILES ARE SPLIT OUT?
+import datetime
 
 
 
 db = SQLAlchemy()
-db.init_app(app) #TODO: IS THIS CORRECT? DO I NEED THIS LINE? or should it be "db=SQLAlchemy(app)"?
 
 
 
 # Task model
 class TaskModel(db.Model):
-    __name__ = "tasks"
+    __tablename__ = "tasks"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -20,7 +18,7 @@ class TaskModel(db.Model):
     due_date = db.Column(db.DateTime, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=True)
     category = db.relationship("CategoryModel", back_populates="tasks")
-    created_at = db.Column(db.DateTime, default=datetime.now(datetime.UTC).isoformat())
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC).isoformat())
     updated_at = db.Column(db.DateTime)
 
     def to_dict(self):
@@ -40,7 +38,7 @@ class TaskModel(db.Model):
 
 # Category model
 class CategoryModel(db.Model):
-    __name__ = "categories"
+    __tablename__ = "categories"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
@@ -53,3 +51,6 @@ class CategoryModel(db.Model):
             "name": self.name,
             "color": self.color
         }
+    
+    # HOW DO I INCLUDE THE TASK COUNT AND THE ACTUAL LIST OF TASKS? OR CAN I JUST COUNT THE RELATED TASKS IN THE ROUTE FUNCTION??? 
+    # MIGHT NEED TO DEFINE ANOTHER OUTPUT SCHEMA FOR CATEGORY GET ROUTES...
