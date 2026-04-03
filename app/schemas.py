@@ -1,4 +1,5 @@
 from marshmallow import Schema, fields, validate, validates, ValidationError
+from models import CategoryModel
 
 
 
@@ -49,8 +50,14 @@ class TaskUpdateSchema(Schema):
 
 
 
-# Schema for category response output
-class CategorySchema(PlainCategorySchema):
+# Schema for all categories response output (includes related task count for each category)
+class AllCategorySchema(PlainCategorySchema):
+    task_count = fields.Int()
+
+
+
+# Schema for single category response output (includes list of tasks)
+class SingleCategorySchema(PlainCategorySchema):
     tasks = fields.List(fields.Nested(PlainTaskSchema, many=True), dump_only=True)
 
 
@@ -60,12 +67,20 @@ class CategoryCreateSchema(Schema):
     name = fields.Str(required=True, validate=validate.Length(min=1, max=50))
     color = fields.Str(validate=validate.Length(max=7))
 
-    # Unique validator for color hexcode -- must be 7 characters (including #) with values between 0-F (uppercase only)
+    # Validator for name -- must be unique
+    @validates("name")
+    def reject_repeated_name(self, value, **kwargs):
+        names = [c.to_dict().get("name") for c in CategoryModel.query.all()]
+        if value in names:
+            raise ValidationError("Category with this name already exists.")
+
+
+    # Validator for color hexcode -- must be 7 characters (including #) with values between 0-F (uppercase only)
     @validates("color")
-    def reject_invalid_hexcolor(self, value):
+    def reject_invalid_hexcolor(self, value, **kwargs):
         if len(value) != 7:
             raise ValidationError("Valid hexcodes must be 7 characters long, including #.")
         elif value[0] != "#":
             raise ValidationError("The hexcode must start with #.")
         elif any([c not in "0123456789ABCDEF" for c in value[1:]]):
-            raise ValidationError("Each character of a valid hexcode must be in the numeric range 0-9 or A-F.")
+            raise ValidationError("Each character of a valid hexcode must be in the numeric range 0-9 or A-F (uppercase).")

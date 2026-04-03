@@ -2,6 +2,7 @@ import os
 from flask import Flask, jsonify, request
 from flask_smorest import Api
 from routes.tasks import tasks_blp
+from routes.categories import cats_blp
 from models import db
 
 
@@ -18,6 +19,7 @@ db.init_app(app)
 
 api = Api(app)
 api.register_blueprint(tasks_blp)
+api.register_blueprint(cats_blp)
 
 
 

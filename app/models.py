@@ -43,14 +43,12 @@ class CategoryModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
     color = db.Column(db.String(7), nullable=True)
-    tasks = db.relationship("TaskModel", back_populates="category", lazy="dynamic") #TODO: IS THIS NECESSARY IF I DON'T NEED TO INCLUDE ALL RELATED TASKS?
+    tasks = db.relationship("TaskModel", back_populates="category")
 
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
-            "color": self.color
+            "color": self.color,
+            "task_count": len(self.tasks) if self.tasks else 0
         }
-    
-    # HOW DO I INCLUDE THE TASK COUNT AND THE ACTUAL LIST OF TASKS? OR CAN I JUST COUNT THE RELATED TASKS IN THE ROUTE FUNCTION??? 
-    # MIGHT NEED TO DEFINE ANOTHER OUTPUT SCHEMA FOR CATEGORY GET ROUTES...

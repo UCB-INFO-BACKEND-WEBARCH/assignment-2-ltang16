@@ -8,7 +8,6 @@ import datetime
 
 
 tasks_blp = Blueprint("tasks", __name__, description="CRUD operations that can be performed on tasks")
-#TODO: do I need to use this format??? how would I separate out the format from exploration 10??? 
 
 
 
@@ -41,6 +40,7 @@ class TaskList(MethodView):
         new_task.created_at = datetime.datetime.now(datetime.UTC)
         db.session.add(new_task)
         db.session.commit()
+        return jsonify(new_task.to_dict()), 201
 
 
 
@@ -71,7 +71,7 @@ class Task(MethodView):
         task.category_id = task_data.get("category_id", task.category_id)
         task.updated_at = datetime.datetime.now(datetime.UTC)
         db.session.commit()
-        return task
+        return task, 200
     
     # Route to DELETE the task
     def delete(self, task_id):
