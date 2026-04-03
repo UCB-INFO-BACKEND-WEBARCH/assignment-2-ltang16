@@ -20,7 +20,7 @@ class TaskModel(db.Model):
     due_date = db.Column(db.DateTime, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=True)
     category = db.relationship("CategoryModel", back_populates="tasks")
-    created_at = db.Column(db.DateTime, default=datetime.timezone.utc)
+    created_at = db.Column(db.DateTime, default=datetime.now(datetime.UTC).isoformat())
     updated_at = db.Column(db.DateTime)
 
     def to_dict(self):

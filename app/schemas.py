@@ -24,8 +24,8 @@ class TaskSchema(PlainTaskSchema):
     due_date = fields.DateTime(format="iso")
     category_id = fields.Int()
     category = fields.Nested(PlainCategorySchema)
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
+    created_at = fields.DateTime(format="iso")
+    updated_at = fields.DateTime(format="iso")
 
 
 
@@ -36,10 +36,17 @@ class TaskCreateSchema(Schema):
     due_date = fields.DateTime(format="iso")
     category_id = fields.Int()
 
-    # Unique validator to check if the given category ID currently exists; should give an error if not
-    @validates("category_id")
-    def reject_invalid_category_id(self, value):
-        pass #TODO: ensure that given category ID is in existing categories -- do this in the route in app.py???
+
+
+# Schema for task update input
+class TaskUpdateSchema(Schema):
+    title = fields.Str(validate=validate.Length(max=100))
+    description = fields.Str(validate=validate.Length(max=500))
+    completed = fields.Bool()
+    due_date = fields.DateTime(format="iso")
+    category_id = fields.Int()
+    created_at = fields.DateTime(format="iso")
+    updated_at = fields.DateTime(format="iso")
 
 
 
