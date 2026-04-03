@@ -18,7 +18,12 @@ class CategoryList(MethodView):
     @cats_blp.response(200, AllCategorySchema(many=True))
     def get(self):
         categories = CategoryModel.query
-        return jsonify({"categories": [c.to_dict() for c in categories]})
+        full_categories = []
+        for c in categories:
+            c_dict = c.to_dict()
+            c_dict["task_count"] = len(c.tasks)
+            full_categories.append(c_dict)
+        return jsonify({"categories": full_categories})
     
     # Route to POST (create) a new category
     @cats_blp.arguments(CategoryCreateSchema)

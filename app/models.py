@@ -50,5 +50,4 @@ class CategoryModel(db.Model):
             "id": self.id,
             "name": self.name,
             "color": self.color,
-            "task_count": len(self.tasks) if self.tasks else 0
         }
