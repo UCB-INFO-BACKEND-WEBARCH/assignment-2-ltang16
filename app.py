@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask_smorest import Api
+from flask_migrate import Migrate
 from redis import Redis
 from rq import Queue
 from tasks import tasks_blp
@@ -19,6 +20,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize database
 db.init_app(app)
+
+# Enable database migration tracking
+migrate = Migrate(app, db)
 
 # Import API blueprints to access routes
 api = Api(app)

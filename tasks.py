@@ -3,15 +3,12 @@ from flask_smorest import Blueprint
 from flask.views import MethodView
 from models import db, TaskModel
 from schemas import TaskSchema, TaskCreateSchema, TaskUpdateSchema
+from jobs import send_notification
 import datetime
-import pytz
 
 
 
 tasks_blp = Blueprint("tasks", __name__, description="CRUD operations that can be performed on tasks")
-
-# Setting up timezone so that timestamps are in local time instead of UTC :)))
-tz = pytz.timezone("America/Los_Angeles")
 
 
 
@@ -58,9 +55,10 @@ class TaskList(MethodView):
         if new_task.due_date:
             diff = new_task.due_date - new_task.created_at
             if diff.days == 0 and (diff.seconds > 0 and diff.seconds < 86400):
-                #TODO: ENQUEUE NOTIFICATION IN QUEUE HERE!!!
-
+                from app import notification_queue
+                notification_queue.enqueue(send_notification, new_task.id)
                 full_task_dict["notification_queued"] = True
+                return jsonify(full_task_dict), 202
             
         return jsonify(full_task_dict), 201
 
@@ -100,6 +98,15 @@ class Task(MethodView):
         task.category_id = task_data.get("category_id", task.category_id)
         task.updated_at = datetime.datetime.now()
         db.session.commit()
+
+        # If the due date is updated and is within 24 hours of the current time, queue up the notification!
+        # This doesn't change the output of the task (i.e. adding the "notification_queued" field) but I wanted to include this anyways :)
+        if task.due_date:
+            diff = task.due_date - task.updated_at
+            if diff.days == 0 and (diff.seconds > 0 and diff.seconds < 86400):
+                from app import notification_queue
+                notification_queue.enqueue(send_notification, task.id)
+
         return task, 200
     
 
