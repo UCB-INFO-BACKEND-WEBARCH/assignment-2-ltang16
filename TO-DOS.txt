@@ -1,0 +1,6 @@
+✅ how will you handle input dates in tasks.py? for both task creation and task updating?
+✅ SWITCH OVER TO POSTGRESQL DATABASE AFTER SETTING UP DOCKER
+✅ Docker containerization...
+- Flask database migrations???
+- rq worker to handle notification sending for tasks w/ imminent due dates...
+✅ finish moving error handling + validation to schemas.py :)
