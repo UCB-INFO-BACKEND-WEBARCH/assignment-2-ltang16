@@ -33,3 +33,26 @@ class CategoryList(MethodView):
         db.session.add(new_category)
         db.session.commit()
         return jsonify(new_category.to_dict()), 201
+    
+
+
+# Actions performed on single category route
+@cats_blp.route("/categories/<int:category_id>")
+class Category(MethodView):
+
+    # Route to GET a single category, including the list of tasks in that category
+    @cats_blp.response(200, SingleCategorySchema)
+    def get(self, category_id):
+        category = CategoryModel.query.get_or_404(category_id, description="Category not found.")
+        category_dict = category.to_dict()
+        category_dict["tasks"] = [{"id": t.id, "title": t.title, "completed": t.completed} for t in category.tasks]
+        return jsonify(category_dict)
+    
+    # Route to DELETE a single category -- but prevents deletion of categories that have tasks associated with them
+    def delete(self, category_id):
+        category = CategoryModel.query.get_or_404(category_id, description="Category not found.")
+        if len(category.tasks) > 0:
+            return jsonify({"error": "Cannot delete category with existing tasks. Move or delete tasks first."}), 400
+        db.session.delete(category)
+        db.session.commit()
+        return jsonify({"message": "Category deleted."}), 200
