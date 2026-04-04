@@ -31,11 +31,6 @@ class TaskList(MethodView):
     @tasks_blp.arguments(TaskCreateSchema)
     @tasks_blp.response(201, TaskSchema)
     def post(self, task_data):
-        # Check if the given category ID exists -- if not, throw an error
-        category_id = task_data.get("category_id")
-        ids = [c.to_dict().get("id") for c in CategoryModel.query.all()]
-        if category_id and (category_id not in ids):
-            return jsonify({"error": "The new task's category ID must already exist."}), 400
         new_task = TaskModel(**task_data)
         new_task.created_at = datetime.datetime.now(datetime.UTC)
         db.session.add(new_task)
@@ -59,11 +54,6 @@ class Task(MethodView):
     @tasks_blp.response(200, TaskSchema)
     def put(self, task_data, task_id):
         task = TaskModel.query.get_or_404(task_id, description="Task not found.")
-        # Check if category ID (if given) exists -- if not, throw an error
-        if task_data.get("category_id"):
-            ids = [c.to_dict().get("id") for c in CategoryModel.query.all()]
-            if task_data.get("category_id") not in ids:
-                return jsonify({"error": "The category ID must already exist."}), 400
         task.title = task_data.get("title", task.title)
         task.description = task_data.get("description", task.description)
         task.completed = task_data.get("completed", task.completed)

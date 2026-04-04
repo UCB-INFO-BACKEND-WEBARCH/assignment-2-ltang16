@@ -37,6 +37,13 @@ class TaskCreateSchema(Schema):
     due_date = fields.DateTime(format="iso", allow_none=True)
     category_id = fields.Int(allow_none=True)
 
+    # Validator for category ID -- must already exist
+    @validates("category_id")
+    def reject_category_id(self, value, **kwargs):
+        existing_ids = [c.id for c in CategoryModel.query.all()]
+        if value not in existing_ids:
+            raise ValidationError("The new task's category ID must already exist.")
+
 
 
 # Schema for task update input
@@ -45,8 +52,15 @@ class TaskUpdateSchema(Schema):
     description = fields.Str(validate=validate.Length(max=500))
     completed = fields.Bool()
     due_date = fields.DateTime(format="iso", allow_none=True)
-    category_id = fields.Int()
+    category_id = fields.Int(allow_none=True)
     updated_at = fields.DateTime(format="iso", allow_none=True)
+
+    # Validator for category ID -- must already exist
+    @validates("category_id")
+    def reject_category_id(self, value, **kwargs):
+        existing_ids = [c.id for c in CategoryModel.query.all()]
+        if value not in existing_ids:
+            raise ValidationError("The task's category ID must already exist.")
 
 
 
