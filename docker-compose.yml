@@ -1,3 +1,6 @@
+# This is taken from the week 10 in-class exploration
+# I previously had issues with Docker not running the rq worker, so I just copied over the full .yml file to be safe!
+
 version: '3.8'
 
 services:
@@ -45,7 +48,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tasks
       - REDIS_URL=redis://redis:6379/0
-    command: rq worker --url redis://redis:6379/0 tasks
+    command: rq worker --url redis://redis:6379/0 notifications
     depends_on:
       postgres:
         condition: service_healthy

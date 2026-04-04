@@ -10,7 +10,10 @@ cats_blp = Blueprint("categories", __name__, description="CRUD operations that c
 
 
 
+# =================================================
 # Actions performed on full categories list route
+# =================================================
+
 @cats_blp.route("/categories")
 class CategoryList(MethodView):
 
@@ -25,6 +28,8 @@ class CategoryList(MethodView):
             full_categories.append(c_dict)
         return jsonify({"categories": full_categories})
     
+
+    
     # Route to POST (create) a new category
     @cats_blp.arguments(CategoryCreateSchema)
     @cats_blp.response(201, AllCategorySchema)
@@ -36,7 +41,10 @@ class CategoryList(MethodView):
     
 
 
+# =================================================
 # Actions performed on single category route
+# =================================================
+
 @cats_blp.route("/categories/<int:category_id>")
 class Category(MethodView):
 
@@ -47,6 +55,8 @@ class Category(MethodView):
         category_dict = category.to_dict()
         category_dict["tasks"] = [{"id": t.id, "title": t.title, "completed": t.completed} for t in category.tasks]
         return jsonify(category_dict)
+    
+    
     
     # Route to DELETE a single category -- but prevents deletion of categories that have tasks associated with them
     def delete(self, category_id):
