@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_smorest import Blueprint
 from flask.views import MethodView
-from models import db, TaskModel, CategoryModel
+from models import db, TaskModel
 from schemas import TaskSchema, TaskCreateSchema, TaskUpdateSchema
 import datetime
 
@@ -32,6 +32,11 @@ class TaskList(MethodView):
     @tasks_blp.response(201, TaskSchema)
     def post(self, task_data):
         new_task = TaskModel(**task_data)
+        if task_data.get("due_date"):
+            try:
+                new_task.due_date = datetime.datetime.strptime(task_data.get("due_date"), "%Y-%m-%d")
+            except ValueError:
+                return jsonify({"error": "Please enter the task's due date in the format year-month-day."})
         new_task.created_at = datetime.datetime.now(datetime.UTC)
         db.session.add(new_task)
         db.session.commit()
@@ -57,7 +62,11 @@ class Task(MethodView):
         task.title = task_data.get("title", task.title)
         task.description = task_data.get("description", task.description)
         task.completed = task_data.get("completed", task.completed)
-        task.due_date = task_data.get("due_date", task.due_date)
+        if task_data.get("due_date"):
+            try:
+                task.due_date = datetime.datetime.strptime(task_data.get("due_date"), "%Y-%m-%d")
+            except ValueError:
+                return jsonify({"error": "Please enter the task's due date in the format year-month-day."})
         task.category_id = task_data.get("category_id", task.category_id)
         task.updated_at = datetime.datetime.now(datetime.UTC)
         db.session.commit()

@@ -30,11 +30,11 @@ class TaskSchema(PlainTaskSchema):
 
 
 
-# Schema for task creation input
+# Schema for task creation input (due date is allowed to be a string since it'll be converted)
 class TaskCreateSchema(Schema):
     title = fields.Str(required=True, validate=validate.Length(max=100))
     description = fields.Str(validate=validate.Length(max=500), allow_none=True)
-    due_date = fields.DateTime(format="iso", allow_none=True)
+    due_date = fields.Str(allow_none=True)
     category_id = fields.Int(allow_none=True)
 
     # Validator for category ID -- must already exist
@@ -46,12 +46,12 @@ class TaskCreateSchema(Schema):
 
 
 
-# Schema for task update input
+# Schema for task update input (due date is allowed to be a string since it'll be converted)
 class TaskUpdateSchema(Schema):
     title = fields.Str(validate=validate.Length(max=100))
     description = fields.Str(validate=validate.Length(max=500))
     completed = fields.Bool()
-    due_date = fields.DateTime(format="iso", allow_none=True)
+    due_date = fields.Str(allow_none=True)
     category_id = fields.Int(allow_none=True)
     updated_at = fields.DateTime(format="iso", allow_none=True)
 

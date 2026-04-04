@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import jsonify
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from models import db, CategoryModel
