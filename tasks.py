@@ -100,7 +100,7 @@ class Task(MethodView):
         db.session.commit()
 
         # If the due date is updated and is within 24 hours of the current time, queue up the notification!
-        # This doesn't change the output of the task (i.e. adding the "notification_queued" field) but I wanted to include this anyways :)
+        # This doesn't change the response output (i.e. adding the "notification_queued" field) but I wanted to include this anyways :)
         if task.due_date:
             diff = task.due_date - task.updated_at
             if diff.days == 0 and (diff.seconds > 0 and diff.seconds < 86400):
